@@ -49,57 +49,31 @@
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     };
 
-    // Configuración de la brocha
-    ctx.lineJoin = "round";
-    ctx.lineCap = "round";
-    ctx.lineWidth = 1600; // brocha enorme
-
-    let pintando = false;
-
-    function empezar(x, y) {
-      pintando = true;
-      ctx.globalCompositeOperation = "destination-out";
+    function raspar(x, y) {
+      ctx.globalCompositeOperation = "destination-out"; 
       ctx.beginPath();
-      ctx.moveTo(x, y);
-    }
-
-    function dibujar(x, y) {
-      if (!pintando) return;
-      ctx.lineTo(x, y);
-      ctx.stroke();
-    }
-
-    function terminar() {
-      pintando = false;
-      ctx.closePath();
+      ctx.arc(x, y, 160, 0, Math.PI * 2); // círculo mucho más grande (160px)
+      ctx.fill();
     }
 
     // Mouse
-    canvas.addEventListener("mousedown", function(e) {
-      empezar(e.offsetX, e.offsetY);
-    });
     canvas.addEventListener("mousemove", function(e) {
-      dibujar(e.offsetX, e.offsetY);
+      if (e.buttons === 1) {
+        raspar(e.offsetX, e.offsetY);
+      }
     });
-    canvas.addEventListener("mouseup", terminar);
-    canvas.addEventListener("mouseleave", terminar);
 
     // Touch en móvil
-    canvas.addEventListener("touchstart", function(e) {
-      e.preventDefault();
-      var rect = canvas.getBoundingClientRect();
-      empezar(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
-    }, { passive: false });
-
     canvas.addEventListener("touchmove", function(e) {
-      e.preventDefault();
+      e.preventDefault(); // Bloquea el scroll
       var rect = canvas.getBoundingClientRect();
-      dibujar(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
+      var x = e.touches[0].clientX - rect.left;
+      var y = e.touches[0].clientY - rect.top;
+      raspar(x, y);
     }, { passive: false });
-
-    canvas.addEventListener("touchend", terminar);
   </script>
 </body>
 </html>
+
 
 
