@@ -3,7 +3,6 @@
 <head>
   <title>Tarjeta Raspa y Gana</title>
   <style>
-    /* Centrar todo en la pantalla */
     body {
       display: flex;
       justify-content: center;
@@ -11,9 +10,9 @@
       height: 100vh;
       background: #f0f0f0;
       margin: 0;
+      overflow: hidden; /* Evita que la pantalla se mueva */
     }
 
-    /* Contenedor para superponer imagen y canvas */
     .contenedor {
       position: relative;
       display: inline-block;
@@ -34,10 +33,7 @@
 </head>
 <body>
   <div class="contenedor">
-    <!-- Imagen oculta -->
     <img src="tarjeta.png" id="imagen">
-
-    <!-- Capa de cobertura -->
     <canvas id="capa"></canvas>
   </div>
 
@@ -46,38 +42,36 @@
     var canvas = document.getElementById("capa");
     var ctx = canvas.getContext("2d");
 
-    // Ajustar el canvas al tamaño real de la imagen
     imagen.onload = function() {
       canvas.width = imagen.width;
       canvas.height = imagen.height;
-
-      // Pintar la capa gris encima
       ctx.fillStyle = "silver";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     };
 
-    // Función para raspar
     function raspar(x, y) {
       ctx.globalCompositeOperation = "destination-out"; 
       ctx.beginPath();
-      ctx.arc(x, y, 20, 0, Math.PI * 2);
+      ctx.arc(x, y, 30, 0, Math.PI * 2); // círculo más grande
       ctx.fill();
     }
 
-    // Raspar con el mouse
+    // Mouse
     canvas.addEventListener("mousemove", function(e) {
       if (e.buttons === 1) {
         raspar(e.offsetX, e.offsetY);
       }
     });
 
-    // Raspar con el dedo en móvil
+    // Touch en móvil
     canvas.addEventListener("touchmove", function(e) {
+      e.preventDefault(); // Bloquea el scroll
       var rect = canvas.getBoundingClientRect();
       var x = e.touches[0].clientX - rect.left;
       var y = e.touches[0].clientY - rect.top;
       raspar(x, y);
-    });
+    }, { passive: false }); // Necesario para que funcione preventDefault
   </script>
 </body>
 </html>
+
